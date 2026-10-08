@@ -1,0 +1,83 @@
+<mujoco model="biped_5dof">
+  <compiler angle="degree" coordinate="local" inertiafromgeom="true"/>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.1 0.1" rgb2="0.15 0.15 0.15" width="512" height="512"/>
+    <material name="grid_mat" texture="grid" texrepeat="1 1" texuniform="true"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0 0 2" dir="0 0 -1" directional="true"/>
+    <geom name="floor" type="plane" size="0 0 0.2" material="grid_mat"/>
+
+    <!-- Main Torso/Pelvis Chassis -->
+    <body name="pelvis" pos="0 0 0.5">
+      <freejoint name="root"/>
+      <geom name="pelvis_geom" type="box" size="0.06 0.125 0.04" rgba="0.2 0.2 0.8 1"/>
+      
+      <!-- LEFT LEG -->
+      <body name="left_thigh" pos="0 0.1 0">
+        <joint name="left_hip_roll" type="hinge" axis="1 0 0" range="-45 45"/>
+        <geom name="left_thigh_geom" type="cylinder" size="0.02" fromto="0 0 0 0 0 -0.2" rgba="0.8 0.2 0.2 1"/>
+        <body name="left_shin" pos="0 0 -0.2">
+          <joint name="left_hip_pitch" type="hinge" axis="0 1 0" range="-90 45"/>
+          <geom name="left_shin_geom" type="cylinder" size="0.015" fromto="0 0 0 0 0 -0.2" rgba="0.8 0.2 0.2 1"/>
+          <body name="left_tarsus" pos="0 0 -0.2">
+            <joint name="left_knee_pitch" type="hinge" axis="0 1 0" range="0 120"/>
+            <geom name="left_tarsus_geom" type="cylinder" size="0.01" fromto="0 0 0 0 0 -0.2" rgba="0.8 0.2 0.2 1"/>
+            <body name="left_foot_roll_link" pos="0 0 -0.2">
+              <joint name="left_ankle_pitch" type="hinge" axis="0 1 0" range="-45 45"/>
+              <!-- FIX: Adding explicit mini box geometry to create valid structural mass parameters -->
+              <geom name="left_roll_anchor" type="box" size="0.01 0.01 0.01" rgba="0.8 0.2 0.2 0.5"/>
+              <body name="left_foot" pos="0 0 0">
+                <joint name="left_ankle_roll" type="hinge" axis="1 0 0" range="-20 25"/>
+                <geom name="left_foot_geom" type="box" size="0.06 0.03 0.01" pos="0.02 0 -0.01" rgba="0.2 0.8 0.2 1"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- RIGHT LEG -->
+      <body name="right_thigh" pos="0 -0.1 0">
+        <joint name="right_hip_roll" type="hinge" axis="1 0 0" range="-45 45"/>
+        <geom name="right_thigh_geom" type="cylinder" size="0.02" fromto="0 0 0 0 0 -0.2" rgba="0.8 0.2 0.2 1"/>
+        <body name="right_shin" pos="0 0 -0.2">
+          <joint name="right_hip_pitch" type="hinge" axis="0 1 0" range="-90 45"/>
+          <geom name="right_shin_geom" type="cylinder" size="0.015" fromto="0 0 0 0 0 -0.2" rgba="0.8 0.2 0.2 1"/>
+          <body name="right_tarsus" pos="0 0 -0.2">
+            <joint name="right_knee_pitch" type="hinge" axis="0 1 0" range="0 120"/>
+            <geom name="right_tarsus_geom" type="cylinder" size="0.01" fromto="0 0 0 0 0 -0.2" rgba="0.8 0.2 0.2 1"/>
+            <body name="right_foot_roll_link" pos="0 0 -0.2">
+              <joint name="right_ankle_pitch" type="hinge" axis="0 1 0" range="-45 45"/>
+              <!-- FIX: Adding explicit mini box geometry to create valid structural mass parameters -->
+              <geom name="right_roll_anchor" type="box" size="0.01 0.01 0.01" rgba="0.8 0.2 0.2 0.5"/>
+              <body name="right_foot" pos="0 0 0">
+                <joint name="right_ankle_roll" type="hinge" axis="1 0 0" range="-20 25"/>
+                <geom name="right_foot_geom" type="box" size="0.06 0.03 0.01" pos="0.02 0 -0.01" rgba="0.2 0.8 0.2 1"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+
+    </body>
+  </worldbody>
+
+  <!-- PURE CLEAN ACTUATOR FORCES MAP -->
+  <actuator>
+    <motor name="L_hip_roll" joint="left_hip_roll" ctrlrange="-15 15"/>
+    <motor name="L_hip_pitch" joint="left_hip_pitch" ctrlrange="-30 30"/>
+    <motor name="L_knee_pitch" joint="left_knee_pitch" ctrlrange="-30 30"/>
+    <motor name="L_ankle_pitch" joint="left_ankle_pitch" ctrlrange="-15 15"/>
+    <motor name="L_ankle_roll" joint="left_ankle_roll" ctrlrange="-15 15"/>
+    
+    <motor name="R_hip_roll" joint="right_hip_roll" ctrlrange="-15 15"/>
+    <motor name="R_hip_pitch" joint="right_hip_pitch" ctrlrange="-30 30"/>
+    <motor name="R_knee_pitch" joint="right_knee_pitch" ctrlrange="-30 30"/>
+    <motor name="R_ankle_pitch" joint="right_ankle_pitch" ctrlrange="-15 15"/>
+    <motor name="R_ankle_roll" joint="right_ankle_roll" ctrlrange="-15 15"/>
+  </actuator>
+</mujoco>
